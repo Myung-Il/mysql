@@ -14,6 +14,10 @@ values(2, 1, 25, "Xlabel");
 -- 지우고 다시 해보자
 select * from students;
 
+-- 기본적으로 학년, 반, 번호가 있어야 하는데 없어서 생긴 문제이다
+insert into students(name)
+values("While");
+
 
 -- 삭제
 delete from students where grade=1;
@@ -30,6 +34,12 @@ values(2, 1, 5, "Area");
 
 -- 계속 정렬이 된다, 왜?
 -- 찾아봤는데, 내부에서 자동으로 되는거 같다더라
+select * from students;
+
+insert into students
+values(4, 6, 8, "Binary", 0, 100, 90);
+
+-- 이런 것도 있다더라
 select * from students;
 
 
@@ -57,4 +67,3 @@ from students
 where grade = 2;
 
 select * from students;
-
