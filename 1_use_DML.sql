@@ -33,5 +33,28 @@ values(2, 1, 5, "Area");
 select * from students;
 
 
+-- 수정
+-- 해당 기능은 안전하게 내용을 수정하는 기능인데
+-- 최신 버전에서는 수동으로 해줘야한다고 한다
+set sql_safe_updates = 0;
+update students
+set koreanLanguage = '73'
+where (grade, class, number) = (2, 1, 5);
 
+-- 기본키만 되는 줄 알았는데 아니였다
+-- 한꺼번에 변경되서 놀랐다
+update students
+set koreanLanguage = '0'
+where grade = 2;
+
+-- update 쿼리 내에서 같은 테이블이 서브 테이블이 될 수 없다고 한다
+-- 만약 괄호 안에 students가 students_copy였다면 가능하다는 이야기다
+update students
+set koreanLanguage = (
+select koreanLanguage
+from students
+)
+where grade = 2;
+
+select * from students;
 
