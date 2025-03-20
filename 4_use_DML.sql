@@ -19,6 +19,7 @@ select * from students where grade = 2;
 
 select * from students where grade = 2 and class = 1; -- 2학년이면서 1반인 사람만 조회
 select * from students where grade between 2 and 3;   -- 학년이 2학년이거나 3학년만 조회
+select * from students where grade = 2 or grade = 3;  -- 위와 같은 결과
 select * from students where grade in (1, 2);         -- 괄호 안에 있는 학년만 조회
 select * from students where grade not in (1, 2);     -- 괄호 안에 없는 학년만 조회
 select * from students where name like '%label%';     -- 문자열 조회, %%로 감싸면 철자 조회
@@ -26,3 +27,6 @@ select * from students where name like '__ab_l%';     -- 문자열 조회, _를 
 select * from students where name like '__ab_l';      -- 문자열 조회, 해당 패턴으로 끝나는 단어 조회
 -- '[0-5]%'0~5사이 숫자로 시작하는 문자열 조회
 -- '[^0-5]%'0~5사이 외의 문자열 조회
+select * from students order by class, grade; -- 반, 학년 순으로 기준으로 정렬
+select * from students order by number desc;  -- 번호를 기준으로 내림차순 정렬 (asc는 오름차순)
+
