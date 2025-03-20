@@ -30,3 +30,29 @@ select * from students where name like '__ab_l';      -- 문자열 조회, 해�
 select * from students order by class, grade; -- 반, 학년 순으로 기준으로 정렬
 select * from students order by number desc;  -- 번호를 기준으로 내림차순 정렬 (asc는 오름차순)
 
+-- 집계 함수를 사용해보기 전에 자률를 추가해준다
+update students
+set koreanLanguage = 100, mathematics = 89, english = 98
+where name = 'For';
+
+update students
+set koreanLanguage = 53, mathematics = 34, english = 67
+where name = 'Area';
+
+update students
+set koreanLanguage = 24, mathematics = 98, english = 31
+where name = 'Xlabel';
+
+update students
+set koreanLanguage = 43, mathematics = 87, english = 55
+where name = 'Ylabel';
+
+update students
+set koreanLanguage = 100, mathematics = 100, english = 98
+where name = 'Bool';
+
+update students
+set koreanLanguage = 84, mathematics = 3, english = 11
+where name = 'Binary';
+
+select * from students;
