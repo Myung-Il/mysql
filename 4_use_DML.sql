@@ -56,3 +56,32 @@ set koreanLanguage = 84, mathematics = 3, english = 11
 where name = 'Binary';
 
 select * from students;
+
+-- 집계 함수
+select sum(koreanLanguage) from students;                                 -- 전체 학생의 국어 점수
+select sum(koreanLanguage) as '국어 점수 총합' from students;                 -- 전체 학생의 국어 점수, 타이틀 작성
+select sum(koreanLanguage) as '국어 점수 총합' from students where grade = 2; -- 2학년 학생의 국어 점수, 타이틀 작성
+
+select
+sum(koreanLanguage) as '국어 점수 총합',
+avg(mathematics) as '수학 평균',
+min(english) as '영어 최저 점수',
+max(english) as '영어 최고 점수'
+from students;
+
+select count(grade) from students where grade = 2; -- 2학년 학생 수
+
+select                        -- 조회를 하겠다
+grade,                        -- grade와
+count(grade) as '학생 수',      -- 각 한년 수와
+sum(english) as '영어 시험 총합' -- 각 영어 총합으로
+from students                 -- 테이블을
+group by grade;               -- 단, grade를 기준으로 정리하고나서
+
+select                        -- 조회를 하겠다
+grade,                        -- grade와
+count(grade) as '학생 수',      -- 각 한년 수와
+sum(english) as '영어 시험 총합' -- 각 영어 총합으로
+from students                 -- 테이블을
+group by grade                -- 단, grade를 기준으로 정리하고나서 - 그룹의 기준
+having grade > 2;             -- 단, 2학년 위로                - 그룹의 조건
