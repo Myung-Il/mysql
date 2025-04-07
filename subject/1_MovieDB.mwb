@@ -1,0 +1,176 @@
+-- 1. 데이터베이스 생성
+CREATE DATABASE MovieDB;
+USE MovieDB;
+
+-- 2. Customer
+CREATE TABLE Customer (
+    customer_id VARCHAR(20),
+    customer_tier ENUM('Unrank', 'Bronze', 'Silver', 'Gold') DEFAULT 'Unrank',
+    customer_phone VARCHAR(20),
+    customer_name VARCHAR(45),
+    customer_gender ENUM('Male', 'Female'),
+    customer_birth DATE,
+    PRIMARY KEY (customer_id)
+);
+
+-- 3. Pay
+CREATE TABLE Pay (
+    pay_bank VARCHAR(45),
+    pay_cardnum VARCHAR(20),
+    pay_cvc CHAR(3),
+    pay_date DATE,
+    customer_id VARCHAR(20),
+    PRIMARY KEY (pay_cardnum, customer_id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+-- 4. Theater
+CREATE TABLE Theater (
+    theater_name VARCHAR(20),
+    theater_managername VARCHAR(45),
+    theater_phone VARCHAR(45) CHECK (theater_phone REGEXP '^[0-9-]+$'),
+    PRIMARY KEY (theater_name)
+);
+
+-- 5. Screen
+CREATE TABLE Screen (
+    screen_num INT,
+    screen_seat INT CHECK (screen_seat >= 0),
+    theater_name VARCHAR(20),
+    PRIMARY KEY (screen_num, theater_name),
+    FOREIGN KEY (theater_name) REFERENCES Theater(theater_name)
+);
+
+-- 6. Product
+CREATE TABLE Product (
+    product_name VARCHAR(40),
+    product_amount INT CHECK (product_amount >= 0),
+    product_company VARCHAR(45),
+    product_price INT CHECK (product_price >= 0),
+    theater_name VARCHAR(20),
+    PRIMARY KEY (product_name, theater_name),
+    FOREIGN KEY (theater_name) REFERENCES Theater(theater_name)
+);
+
+-- 7. ProductOrder
+CREATE TABLE ProductOrder (
+    productorder_num INT,
+    productorder_amount INT CHECK (productorder_amount > 0),
+    productorder_purchasetime DATETIME,
+    productorder_salesprice INT CHECK (productorder_salesprice >= 0),
+    product_name VARCHAR(40),
+    theater_name VARCHAR(20),
+    PRIMARY KEY (productorder_num),
+    FOREIGN KEY (product_name, theater_name)
+        REFERENCES Product(product_name, theater_name)
+);
+
+-- 8. Event
+CREATE TABLE Event (
+    event_name VARCHAR(40),
+    event_content VARCHAR(200),
+    event_startday DATETIME,
+    event_endday DATETIME,
+    PRIMARY KEY (event_name),
+    CHECK (event_endday >= event_startday)
+);
+
+-- 9. Movie
+CREATE TABLE Movie (
+    movie_num INT,
+    movie_name VARCHAR(20),
+    movie_genre VARCHAR(10),
+    movie_age INT CHECK (movie_age IN (0, 12, 15, 19)),
+    movie_runtime INT CHECK (movie_runtime > 0),
+    PRIMARY KEY (movie_num)
+);
+
+-- 10. Director
+CREATE TABLE Director (
+    director_name VARCHAR(20),
+    director_age INT CHECK (director_age >= 0),
+    director_gender ENUM('Male', 'Female'),
+    PRIMARY KEY (director_name)
+);
+
+-- Director_has_Movie
+CREATE TABLE Director_has_Movie (
+    Director_director_name VARCHAR(20),
+    Movie_movie_num INT,
+    PRIMARY KEY (Director_director_name, Movie_movie_num),
+    FOREIGN KEY (Director_director_name) REFERENCES Director(director_name),
+    FOREIGN KEY (Movie_movie_num) REFERENCES Movie(movie_num)
+);
+
+-- 11. Actor
+CREATE TABLE Actor (
+    actor_name VARCHAR(20),
+    actor_age INT CHECK (actor_age >= 0),
+    actor_gender ENUM('Male', 'Female'),
+    PRIMARY KEY (actor_name)
+);
+
+-- Actor_has_Movie
+CREATE TABLE Actor_has_Movie (
+    Actor_actor_name VARCHAR(20),
+    Movie_movie_num INT,
+    PRIMARY KEY (Actor_actor_name, Movie_movie_num),
+    FOREIGN KEY (Actor_actor_name) REFERENCES Actor(actor_name),
+    FOREIGN KEY (Movie_movie_num) REFERENCES Movie(movie_num)
+);
+
+-- 12. ScreeningInfo
+CREATE TABLE ScreeningInfo (
+    screeninginfo_starttime DATETIME,
+    screeninginfo_price INT CHECK (screeninginfo_price >= 0),
+    screeninginfo_emptyseat_count INT CHECK (screeninginfo_emptyseat_count >= 0),
+    screen_num INT,
+    theater_name VARCHAR(20),
+    movie_num INT,
+    PRIMARY KEY (screeninginfo_starttime, screen_num, theater_name),
+    FOREIGN KEY (screen_num, theater_name) REFERENCES Screen(screen_num, theater_name),
+    FOREIGN KEY (movie_num) REFERENCES Movie(movie_num)
+);
+
+-- 13. Seat
+CREATE TABLE Seat (
+    seat_num VARCHAR(5),
+    seat_isempty TINYINT(1) CHECK (seat_isempty IN (0, 1)),
+    screeninginfo_starttime DATETIME,
+    screen_num INT,
+    theater_name VARCHAR(20),
+    PRIMARY KEY (seat_num, screeninginfo_starttime, screen_num, theater_name),
+    FOREIGN KEY (screeninginfo_starttime, screen_num, theater_name)
+        REFERENCES ScreeningInfo(screeninginfo_starttime, screen_num, theater_name)
+);
+
+-- 14. MovieOrder (수정 완료)
+CREATE TABLE MovieOrder (
+    movieorder_num INT,
+    movieorder_purchasetime DATETIME,
+    movieorder_salesprice INT CHECK (movieorder_salesprice >= 0),
+    seat_num VARCHAR(5),
+    screeninginfo_starttime DATETIME,
+    screen_num INT,
+    theater_name VARCHAR(20),
+    pay_bank VARCHAR(45),
+    pay_cardnum VARCHAR(20),
+    customer_id VARCHAR(20),
+    PRIMARY KEY (movieorder_num),
+    FOREIGN KEY (seat_num, screeninginfo_starttime, screen_num, theater_name)
+        REFERENCES Seat(seat_num, screeninginfo_starttime, screen_num, theater_name),
+    FOREIGN KEY (pay_cardnum, customer_id) REFERENCES Pay(pay_cardnum, customer_id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+-- 15. Review
+CREATE TABLE Review (
+    review_num INT,
+    review_rating INT CHECK (review_rating BETWEEN 1 AND 5),
+    review_comment TEXT,
+    movieorder_num INT,
+    movie_num INT,
+    PRIMARY KEY (review_num),
+    FOREIGN KEY (movieorder_num) REFERENCES MovieOrder(movieorder_num),
+    FOREIGN KEY (movie_num) REFERENCES Movie(movie_num)
+);
